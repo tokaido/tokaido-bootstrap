@@ -32,6 +32,8 @@ module Tokaido
         stop_muxr
         disable_firewall_rules
         unlisten_for_commands
+
+        exit
       end
 
       def add_app(application)

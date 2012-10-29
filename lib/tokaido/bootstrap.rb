@@ -22,7 +22,6 @@ module Tokaido
 
     def self.stop
       @manager.stop
-      exit
     end
   end
 end
