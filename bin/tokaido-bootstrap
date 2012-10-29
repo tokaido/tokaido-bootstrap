@@ -1,0 +1,12 @@
+require "tokaido/bootstrap"
+
+muxr_socket = ENV["TOKAIDO_MUXR_SOCKET"]
+log_socket = ENV["TOKAIDO_LOG_SOCKET"]
+
+unless muxr_socket && log_socket
+  exit 1
+end
+
+Tokaido::Bootstrap.boot(muxr_socket, log_socket)
+
+# vim: set filetype=ruby
