@@ -1,0 +1,11 @@
+dest = "/Library/LaunchDaemons/com.tokaido.firewall.plist"
+exit if File.exist?(dest)
+
+require "fileutils"
+
+plist = File.expand_path("../../firewall/com.tokaido.firewall.plist", __FILE__)
+FileUtils.cp plist, dest
+
+system "launchctl load -Fw #{dest}"
+
+# vim: set filetype=ruby
