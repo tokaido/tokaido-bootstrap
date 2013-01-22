@@ -8,8 +8,9 @@ module Tokaido
     def self.boot(tmpdir)
       muxr_socket = File.join(tmpdir, "muxr.sock")
       log_socket = File.join(tmpdir, "log.sock")
+      firewall_socket = File.join(tmpdir, "firewall.sock")
 
-      @manager = Tokaido::Bootstrap::Manager.new(muxr_socket, log_socket, nil)
+      @manager = Tokaido::Bootstrap::Manager.new(muxr_socket, log_socket, firewall_socket)
       @manager.enable
 
       setup_traps

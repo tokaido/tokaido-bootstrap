@@ -3,6 +3,12 @@ exit if File.exist?(dest)
 
 require "fileutils"
 
+FileUtils.mkdir_p("/etc/resolver")
+
+File.open("/etc/resolver/tokaido", "w") do |file|
+  file.puts "# Generated for Tokaido\nnameserver 127.0.0.1\nport 30405"
+end
+
 plist = File.expand_path("../../firewall/com.tokaido.firewall.plist", __FILE__)
 FileUtils.cp plist, dest
 

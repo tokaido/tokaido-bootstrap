@@ -8,7 +8,7 @@ module Tokaido
       def initialize(muxr_socket, logger_socket, firewall_socket)
         @muxr_socket = muxr_socket
         @logger_socket = logger_socket
-        @firewall_socket = firewall_socket
+        @firewall_socket = UNIXSocket.new(firewall_socket)
       end
 
       def enable
@@ -73,7 +73,7 @@ module Tokaido
       end
 
       def boot_dns
-        @dns_server = Tokaido::DNS::Server.new(9439)
+        @dns_server = Tokaido::DNS::Server.new(30405)
         @dns_server.start
       end
 
@@ -92,9 +92,11 @@ module Tokaido
       end
 
       def enable_firewall_rules
+        @firewall_socket.puts "enable firewall rules"
       end
 
       def disable_firewall_rules
+        @firewall_socket.puts "disable firewall rules"
       end
 
       def listen_for_commands

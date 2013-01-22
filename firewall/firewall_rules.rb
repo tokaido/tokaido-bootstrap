@@ -1,10 +1,16 @@
 require "socket"
 
+begin
+
 tmp = ENV["TOKAIDO_TMPDIR"]
 
-socket = "#{tmp}/tokaido-sock"
+socket = "#{tmp}/firewall.sock"
 out = "#{tmp}/tokaido-out"
 err = "#{tmp}/tokaido-err"
+
+# Redirect stdout and stderr to log files
+STDOUT.reopen(out)
+STDERR.reopen(err)
 
 begin
   server = UNIXServer.open(socket)
@@ -21,10 +27,6 @@ at_exit do
   server.close
   File.delete(socket)
 end
-
-# Redirect stdout and stderr to log files
-STDOUT.reopen(out)
-STDERR.reopen(err)
 
 puts "Tokaido Active!"
 
@@ -44,4 +46,9 @@ while true
     end
   rescue EOFError
   end
+end
+
+rescue Exception => e
+  puts "#{e.class}: #{e.message}"
+  puts e.backtrace
 end
