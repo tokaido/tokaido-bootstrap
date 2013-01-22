@@ -22,6 +22,10 @@ module Tokaido
         @server.close
       end
 
+      def respond(string)
+        @socket.puts string
+      end
+
     private
       def listen_for_requests
         @socket = @server.accept
@@ -31,8 +35,8 @@ module Tokaido
           query = @protocol.decode(line)
 
           if query.error?
-            puts query.error_reason
-            @socket.puts query.error_reason
+            puts query.reason
+            @socket.puts query.reason
           else
             handle_query(query)
           end

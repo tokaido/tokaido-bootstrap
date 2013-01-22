@@ -16,7 +16,6 @@ module Tokaido
 
         @muxr_commands_server = connect_server(@muxr_socket)
         @logger_server = connect_server(@logger_socket)
-        #@firewall_client = connect_client(@firewall_socket)
 
         boot_dns
         boot_muxr
@@ -27,7 +26,7 @@ module Tokaido
 
       def stop
         puts "Stopping Tokaido Bootstrap Manager"
-        
+
         stop_dns
         stop_muxr
         disable_firewall_rules
@@ -36,12 +35,26 @@ module Tokaido
         exit
       end
 
+      MESSAGES = {
+        unavailable_port: %{ERR "%{host}" port},
+        dup_host:         %{DUP "%{host}" host},
+        dup_dir:          %{DUP "%{host}" directory},
+        added:            %{ADDED "%{host}"}
+      }
+
       def add_app(application)
-        @apps.add application
+        params = { host: application.host }
+        response = @apps.add application, self
+
+        @listener.respond(MESSAGES[response] % params)
       end
 
       def remove_app(application)
         @apps.remove application
+      end
+
+      def app_booted(application)
+        @listener.respond %{READY "#{application.host}"}
       end
 
     private

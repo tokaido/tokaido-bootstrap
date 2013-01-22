@@ -5,23 +5,22 @@ provides the initial installation.
 
 ## Bootstrap (bin/tokaido-bootstrap)
 
-Make sure to set `$TOKAIDO_MUXR_SOCKET` and `$TOKAIDO_RUBY_LOGGER`
-environment variables.
+Make sure to set `$TOKAIDO_TMPDIR`
 
 1. Boot tokaido-dns
 2. Boot muxr
-3. Listen on $TOKAIDO_MUXR_SOCKET for apps to add or remove
-4. Publish logs on $TOKAIDO_RUBY_LOGGER
+3. Listen on `$TOKAIDO_TMPDIR/muxr.sock` for apps to add or remove
+4. Publish logs on `$TOKAIDO_TMPDIR/log.sock`
 5. Enable the firewall rules
 
 ## Shutdown
 
-1. Shut down tokaido-dns
-2. Shut down muxr
-3. Close $TOKAIDO_MUXR_SOCKET and delete the file
+1. Shut down `tokaido-dns`
+2. Shut down `muxr`
+3. Close `$TOKAIDO_TMPDIR/muxr.sock` and delete the file
 4. Disable the firewall rules
 
-## Muxr Protocol (`$TOKAIDO_MUXR_SOCKET`)
+## Muxr Protocol (`$TOKAIDO_TMPDIR/muxr.sock`)
 
 The configuration protocol is a line protocol.
 
