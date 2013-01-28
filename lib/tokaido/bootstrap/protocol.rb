@@ -1,12 +1,10 @@
 module Tokaido
   module Bootstrap
     class Request
-      attr_reader :type, :directory, :host, :port
+      attr_reader :type, :directory, :host
 
-      def initialize(type, directory, host, port)
-        port = port.to_i(10)
-
-        @type, @directory, @host, @port = type, directory, host, port
+      def initialize(type, directory, host)
+        @type, @directory, @host = type, directory, host
       end
 
       def error?
@@ -60,18 +58,18 @@ module Tokaido
           return Stop.new
         end
 
-        match = string.match(/^(#{OPS}) "([^"]+)" "([^"]+)" (\d+)$/)
+        match = string.match(/^(#{OPS}) "([^"]+)" "([^"]+)"$/)
 
         return Error.new(nil) if match.nil?
 
-        _, type, directory, host, port = match.to_a
+        _, type, directory, host = match.to_a
 
         if !valid_host?(host)
           Error.new(host, INVALID_HOST)
         elsif !valid_directory?(directory)
           Error.new(host, INVALID_DIRECTORY)
         else
-          Request.new(type, directory, host, port)
+          Request.new(type, directory, host)
         end
       end
 

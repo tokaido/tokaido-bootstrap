@@ -5,23 +5,28 @@ require "socket"
 module Tokaido
   module Bootstrap
     class Manager
-      def initialize(muxr_socket, logger_socket, firewall_socket)
+      attr_reader :tmpdir
+
+      def initialize(muxr_socket, firewall_socket, tmpdir)
         @muxr_socket = muxr_socket
-        @logger_socket = logger_socket
         @firewall_socket = UNIXSocket.new(firewall_socket)
+        @tmpdir = tmpdir
       end
 
       def enable
         puts "Enabling Tokaido Bootstrap Manager"
 
         @muxr_commands_server = connect_server(@muxr_socket)
-        @logger_server = connect_server(@logger_socket)
 
         boot_dns
         boot_muxr
 
         enable_firewall_rules
         listen_for_commands
+      end
+
+      def process_request(line)
+        @listener.process_request(line)
       end
 
       def stop
@@ -31,8 +36,6 @@ module Tokaido
         stop_muxr
         disable_firewall_rules
         unlisten_for_commands
-
-        exit
       end
 
       MESSAGES = {

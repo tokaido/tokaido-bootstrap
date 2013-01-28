@@ -6,22 +6,25 @@ require "tokaido/bootstrap/listener"
 module Tokaido
   module Bootstrap
     def self.boot(tmpdir)
+      @stopped = false
+      @mutex = Mutex.new
+
       muxr_socket = File.join(tmpdir, "muxr.sock")
       log_socket = File.join(tmpdir, "log.sock")
       firewall_socket = File.join(tmpdir, "firewall.sock")
 
-      @manager = Tokaido::Bootstrap::Manager.new(muxr_socket, log_socket, firewall_socket)
+      @manager = Tokaido::Bootstrap::Manager.new(muxr_socket, firewall_socket, tmpdir)
       @manager.enable
 
-      setup_traps
+      at_exit { stop }
+
+      STDIN.each do |line|
+        @manager.process_request line
+      end
 
       sleep
-    end
-
-    def self.setup_traps
-      puts "Enabling traps"
-      trap(:TERM) { stop }
-      trap(:INT) { stop }
+    rescue Interrupt
+      # graceful ctrl-c is handled by the above at_exit hook, so don't do anything
     end
 
     def self.stop

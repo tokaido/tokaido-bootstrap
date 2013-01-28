@@ -1,5 +1,6 @@
 require "tokaido/bootstrap/protocol"
 require "muxr/application"
+require "socket"
 
 module Tokaido
   module Bootstrap
@@ -23,7 +24,19 @@ module Tokaido
       end
 
       def respond(string)
-        @socket.puts string
+        @socket.puts string if @socket
+        puts string
+      end
+
+      def process_request(line, socket=nil)
+        query = @protocol.decode(line)
+
+        if query.error?
+          puts query.reason
+          @socket.puts query.reason if socket
+        else
+          handle_query(query)
+        end
       end
 
     private
@@ -31,27 +44,44 @@ module Tokaido
         @socket = @server.accept
 
         while line = @socket.readline.chomp
-          p line
-          query = @protocol.decode(line)
-
-          if query.error?
-            puts query.reason
-            @socket.puts query.reason
-          else
-            handle_query(query)
-          end
+          process_request(line, @socket)
         end
+      end
+
+      def out(query)
+        File.join(@manager.tmpdir, "#{query.host}.out")
+      end
+
+      def err(query)
+        File.join(@manager.tmpdir, "#{query.host}.err")
+      end
+
+      def app_params(query)
+        { host: query.host, port: find_server_port, out: out(query), err: err(query) }
       end
 
       def handle_query(query)
         case query.type
         when "ADD"
-          @manager.add_app Muxr::Application.new(query.directory, port: query.port, host: query.host)
+          @manager.add_app Muxr::Application.new(query.directory, app_params(query))
         when "REMOVE"
           raise
         when "STOP"
-          @manager.stop
+          # This will trigger an at_exit hook that shuts down the applications
+          exit
         end
+      end
+
+      PORT_RANGE = (20000..40000).to_a
+
+      def find_server_port
+        port_attempt = PORT_RANGE.sample
+        socket = TCPServer.new("0.0.0.0", port_attempt)
+        return port_attempt
+      rescue Errno::EADDRINUSE
+        retry
+      ensure
+        socket.close if socket
       end
     end
   end
