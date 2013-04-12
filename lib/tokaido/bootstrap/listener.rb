@@ -2,6 +2,8 @@ require "tokaido/bootstrap/protocol"
 require "muxr/application"
 require "socket"
 
+Thread.abort_on_exception = true
+
 module Tokaido
   module Bootstrap
     class Listener
@@ -14,34 +16,36 @@ module Tokaido
       end
 
       def listen
-        puts "Enabled Tokaido Bootstrap Listener"
         Thread.new { listen_for_requests }
       end
 
       def stop
-        puts "Shut Down Tokaido Bootstrap Listener"
         @server.close
       end
 
       def respond(string)
-        @socket.puts string if @socket
-        puts string
+        print_to_socket(string)
       end
 
       def process_request(line, socket=nil)
         query = @protocol.decode(line)
 
         if query.error?
-          puts query.reason
-          @socket.puts query.reason if socket
+          print_to_socket query.reason
         else
           handle_query(query)
         end
       end
 
     private
+      def print_to_socket(msg)
+        @socket.puts msg if @socket
+        puts msg
+      end
+
       def listen_for_requests
         @socket = @server.accept
+        print_to_socket "TOKAIDO ACTIVE"
 
         while line = @socket.readline.chomp
           process_request(line, @socket)

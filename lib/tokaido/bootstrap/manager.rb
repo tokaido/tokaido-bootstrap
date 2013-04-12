@@ -14,8 +14,6 @@ module Tokaido
       end
 
       def enable
-        puts "Enabling Tokaido Bootstrap Manager"
-
         @muxr_commands_server = connect_server(@muxr_socket)
 
         boot_dns
@@ -30,8 +28,6 @@ module Tokaido
       end
 
       def stop
-        puts "Stopping Tokaido Bootstrap Manager"
-
         stop_dns
         stop_muxr
         disable_firewall_rules

@@ -54,7 +54,7 @@ module Tokaido
       end
 
       def decode(string)
-        if string == "STOP"
+        if string.chomp == "STOP"
           return Stop.new
         end
 
