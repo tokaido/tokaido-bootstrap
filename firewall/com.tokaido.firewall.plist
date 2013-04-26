@@ -6,9 +6,10 @@
 	<string>com.tokaido.firewall</string>
 	<key>ProgramArguments</key>
 	<array>
-		<string>sh</string>
-		<string>-c</string>
-    <string>/Users/tomhuda/.rvm/rubies/ruby-1.9.3-p327/bin/ruby /Users/tomhuda/Code/tokaido-bootstrap/firewall/firewall_rules.rb</string>
+    <string>TOKAIDO_FIREWALL_COMMAND</string>
+    <string>-r</string>
+    <string>TOKAIDO_FIREWALL_SETUP</string>
+    <string>TOKAIDO_FIREWALL_SCRIPT</string>
 	</array>
 	<key>RunAtLoad</key>
 	<true/>
@@ -17,7 +18,7 @@
   <key>EnvironmentVariables</key>
   <dict>
     <key>TOKAIDO_TMPDIR</key>
-    <string>/Users/tomhuda/Code/tokaido-bootstrap/tmp</string>
+    <string>TOKAIDO_FIREWALL_TMPDIR</string>
   </dict>
 </dict>
 </plist>

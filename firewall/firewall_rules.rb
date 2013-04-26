@@ -5,8 +5,8 @@ begin
 tmp = ENV["TOKAIDO_TMPDIR"]
 
 socket = "#{tmp}/firewall.sock"
-out = "#{tmp}/tokaido-out"
-err = "#{tmp}/tokaido-err"
+out = "#{tmp}/firewall.out"
+err = "#{tmp}/firewall.err"
 
 # Redirect stdout and stderr to log files
 STDOUT.reopen(out)
