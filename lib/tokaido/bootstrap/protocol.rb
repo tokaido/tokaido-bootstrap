@@ -43,7 +43,10 @@ module Tokaido
     end
 
     class Protocol
-      OPS = "ADD|REMOVE"
+      ADD = "ADD"
+      ADD_MATCH = /^(ADD) "([^"]+)" "([^"]+)"$/
+      REMOVE = "REMOVE"
+      REMOVE_MATCH = /^(REMOVE) "([^"]+)"$/
       INVALID_HOST = "invalid-host"
       INVALID_DIRECTORY = "dir-not-found"
 
@@ -58,15 +61,15 @@ module Tokaido
           return Stop.new
         end
 
-        match = string.match(/^(#{OPS}) "([^"]+)" "([^"]+)"$/)
+        match = string.match(ADD_MATCH) || string.match(REMOVE_MATCH)
 
         return Error.new(nil) if match.nil?
 
-        _, type, directory, host = match.to_a
+        _, type, host, directory = match.to_a
 
         if !valid_host?(host)
           Error.new(host, INVALID_HOST)
-        elsif !valid_directory?(directory)
+        elsif type == "ADD" && !valid_directory?(directory)
           Error.new(host, INVALID_DIRECTORY)
         else
           Request.new(type, directory, host)

@@ -11,6 +11,7 @@ module Tokaido
         @manager = manager
         @server = server
         @protocol = Protocol.new("tokaido")
+        @apps = {}
 
         @stopped = false
       end
@@ -67,9 +68,12 @@ module Tokaido
       def handle_query(query)
         case query.type
         when "ADD"
-          @manager.add_app Muxr::Application.new(query.directory, app_params(query))
+          app = Muxr::Application.new(query.directory, app_params(query))
+          @apps[query.host] = app
+          @manager.add_app app
         when "REMOVE"
-          raise
+          app = @apps[query.host]
+          @manager.remove_app app
         when "STOP"
           # This will trigger an at_exit hook that shuts down the applications
           exit

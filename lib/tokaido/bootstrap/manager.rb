@@ -38,7 +38,8 @@ module Tokaido
         unavailable_port: %{ERR "%{host}" port},
         dup_host:         %{DUP "%{host}" host},
         dup_dir:          %{DUP "%{host}" directory},
-        added:            %{ADDED "%{host}"}
+        added:            %{ADDED "%{host}"},
+        removed:          %{REMOVED "%{host}"}
       }
 
       def add_app(application)
@@ -49,7 +50,10 @@ module Tokaido
       end
 
       def remove_app(application)
-        @apps.remove application
+        params = { host: application.host }
+        response = @apps.remove application
+
+        @listener.respond(MESSAGES[response] % params)
       end
 
       def app_booted(application)
