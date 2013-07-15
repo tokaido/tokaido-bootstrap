@@ -38,6 +38,11 @@ module Tokaido
         end
       end
 
+      def failed(app)
+        @manager.remove_app app
+        respond(%{ERR "#{app.host}" failed})
+      end
+
     private
       def print_to_socket(msg)
         @socket.puts msg if @socket
@@ -62,7 +67,7 @@ module Tokaido
       end
 
       def app_params(query)
-        { host: query.host, port: find_server_port, out: out(query), err: err(query) }
+        { host: query.host, port: find_server_port, out: out(query), err: err(query), delegate: self }
       end
 
       def handle_query(query)
