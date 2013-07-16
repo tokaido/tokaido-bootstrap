@@ -49,11 +49,13 @@ module Tokaido
         @listener.respond(MESSAGES[response] % params)
       end
 
-      def remove_app(application)
-        params = { host: application.host }
+      def remove_app(application, options={ respond: true })
         response = @apps.remove application
 
-        @listener.respond(MESSAGES[response] % params)
+        if options[:respond]
+          params = { host: application.host }
+          @listener.respond(MESSAGES[response] % params)
+        end
       end
 
       def app_booted(application)

@@ -39,7 +39,7 @@ module Tokaido
       end
 
       def failed(app)
-        @manager.remove_app app
+        @manager.remove_app(app, respond: false)
         respond(%{ERR "#{app.host}" failed})
       end
 
