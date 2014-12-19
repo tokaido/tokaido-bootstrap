@@ -39,9 +39,10 @@ while true
     # Use rule 28561 so we can find and delete it later
     while line = s.readline.chomp
       if line == "enable firewall rules"
-        system "ipfw add 28561 fwd 127.0.0.1, 28561 tcp from any to me dst-port 80 in && sysctl -w net.inet.ip.forwarding=1"
+        system "sysctl -w net.inet.ip.forwarding=1"
+        system "echo \"rdr pass proto tcp from any to any port {80,28561} -> 127.0.0.1 port 28561\" | pfctl -a \"com.apple/250.ApplicationFirewall\" -Ef -"
       elsif line == "disable firewall rules"
-        system "ipfw del 28561"
+        system "pfctl -a com.apple/250.ApplicationFirewall -F all"
       end
     end
   rescue EOFError
