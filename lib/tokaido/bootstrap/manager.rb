@@ -9,7 +9,7 @@ module Tokaido
 
       def initialize(muxr_socket, firewall_socket, tmpdir)
         @muxr_socket = muxr_socket
-        @firewall_socket = UNIXSocket.new(firewall_socket)
+        @firewall_socket = connect_client(firewall_socket)
         @tmpdir = tmpdir
       end
 
@@ -73,8 +73,11 @@ module Tokaido
       end
 
       def connect_client(socket)
-        # TODO Error handling
-        UNIXSocket.open(socket)
+        begin
+          UNIXSocket.new(socket)
+        rescue Errno::ENOENT, Errno::EACCES
+          retry
+        end
       end
 
       def boot_dns
