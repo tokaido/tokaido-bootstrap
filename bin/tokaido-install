@@ -1,17 +1,51 @@
-dest = "/Library/LaunchDaemons/com.tokaido.firewall.plist"
-exit if File.exist?(dest)
+module Tokaido; end
 
-require "fileutils"
+require 'tokaido/bootstrap/piloto'
+require 'fileutils'
 
-FileUtils.mkdir_p("/etc/resolver")
+module Tokaido::Bootstrap
+  class Installer
+    def load_yosemite_and_forward
+      system "launchctl bootstrap system #{@pilot.firewall_destination}"
+      system "launchctl enable system/com.tokaido.firewall"
+      system "launchctl kickstart -k system/com.tokaido.firewall"
+    end
 
-File.open("/etc/resolver/tokaido", "w") do |file|
-  file.puts "# Generated for Tokaido\nnameserver 127.0.0.1\nport 30405"
+    def load_before_yosemites
+      system "launchctl load -Fw #{@pilot.firewall_destination}"
+    end
+  end
 end
 
-plist = File.expand_path("../../firewall/com.tokaido.firewall.plist", __FILE__)
-FileUtils.cp plist, dest
+module Tokaido::Bootstrap
+  class Installer
+    def ready(pilot)
+      @pilot = pilot
+      @pilot.start
+    end
 
-system "launchctl load -Fw #{dest}"
+    def write_resolver
+      FileUtils.mkdir_p("/etc/resolver")
+  
+      path, content = @pilot.resolver_content
+
+      File.open(path, "w") do |file|
+        file.puts content
+      end
+    end
+
+    def copy_firewall_rules
+      FileUtils.cp @pilot.firewall_source, @pilot.firewall_destination
+    end
+
+    def done
+      exit
+    end
+  end
+end
+
+module Tokaido::Bootstrap
+  Piloto.new(Installer.new).load_jobs
+end
 
 # vim: set filetype=ruby
