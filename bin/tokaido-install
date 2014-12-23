@@ -30,7 +30,7 @@ module Tokaido::Bootstrap
     end
 
     def perform_symlinks(major, minor)
-      self.send "symlink_is_x_#{[major, minor].join("_").to_sym}"
+      self.send "symlink_is_x_#{[major, minor].join("_")}".to_sym
     end
   end
 end
