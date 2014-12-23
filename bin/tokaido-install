@@ -14,6 +14,10 @@ module Tokaido::Bootstrap
     def load_before_yosemites
       system "launchctl load -Fw #{@pilot.firewall_destination}"
     end
+   
+    def perform_symlinks
+      system "ln -sf #{Paths.header_path_for('iconv', 'iconv.h')} /usr/include/iconv.h"
+    end
   end
 end
 
