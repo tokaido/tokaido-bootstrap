@@ -1,5 +1,27 @@
 module Tokaido
   module Bootstrap
+    module Flags
+      STATIC_BUILDS = File.join(File.expand_path("~"), ".tokaido", "Gems", "supps")
+      ICONV = File.join(STATIC_BUILDS, "iconv")
+
+      NOKOGIRI = ["--with-iconv-dir=#{ICONV}"]
+    end
+
+    class GemExtensioner
+      def initialize(builder)
+        @builder = builder
+        @builder.ready(self)
+      end  
+
+      def flags_for(given_gem)
+        begin
+          Flags.const_get(given_gem.upcase.to_sym)
+        rescue
+          []
+        end
+      end
+    end
+
     class Piloto
       def initialize(worker)
         @worker = worker
