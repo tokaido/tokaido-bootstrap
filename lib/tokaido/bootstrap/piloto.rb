@@ -1,7 +1,17 @@
 module Tokaido
   module Bootstrap
-    module Flags
+    module Paths
       STATIC_BUILDS = File.join(File.expand_path("~"), ".tokaido", "Gems", "supps")
+      ICONV = File.join(STATIC_BUILDS, "iconv")
+
+      def self.header_path_for(libname, h_file)
+        begin
+          src = Paths.const_get(libname.upcase.to_sym)
+          File.join(src, "include", h_file)
+        rescue
+          ""
+        end        
+      end
     end
 
     class GemExtensioner
@@ -11,11 +21,7 @@ module Tokaido
       end  
 
       def flags_for(given_gem)
-        begin
-          Flags.const_get(given_gem.upcase.to_sym)
-        rescue
-          []
-        end
+        ""
       end
     end
 
