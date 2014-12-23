@@ -14,14 +14,35 @@ module Tokaido::Bootstrap
     def load_before_yosemites
       system "launchctl load -Fw #{@pilot.firewall_destination}"
     end
-   
-    def perform_symlinks
-      system "ln -sf #{Paths.header_path_for('iconv', 'iconv.h')} /usr/include/iconv.h"
+  end
+
+  class HeaderFileChecker
+    def symlink_os_x_10_10
+      system "ln -sf #{Paths.header_path_for('iconv', '10-10', 'iconv.h')} /usr/include/iconv.h"
+    end
+
+    def symlink_os_x_10_9
+      system "ln -sf #{Paths.header_path_for('iconv', '10-9', 'iconv.h')} /usr/include/iconv.h"
+    end
+
+    def symlink_os_x_10_8
+      system "ln -sf #{Paths.header_path_for('iconv', '10-8', 'iconv.h')} /usr/include/iconv.h"
+    end
+
+    def perform_symlinks(major, minor)
+      self.send "symlink_is_x_#{[major, minor].join("_").to_sym}"
     end
   end
 end
 
 module Tokaido::Bootstrap
+  class HeaderFileChecker
+    def ready(pilot)
+      @pilot = pilot
+      @pilot.start
+    end
+  end
+
   class Installer
     def ready(pilot)
       @pilot = pilot
@@ -43,13 +64,13 @@ module Tokaido::Bootstrap
     end
 
     def done
-      exit
+      HeaderFileEnsurancesPiloto.new(HeaderFileChecker.new)      
     end
   end
 end
 
 module Tokaido::Bootstrap
-  Piloto.new(Installer.new).load_jobs
+  InstallerPiloto.new(Installer.new).load_jobs
 end
 
 # vim: set filetype=ruby
