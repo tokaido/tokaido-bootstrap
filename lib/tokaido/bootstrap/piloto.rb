@@ -14,17 +14,6 @@ module Tokaido
       end
     end
 
-    class GemExtensioner
-      def initialize(builder)
-        @builder = builder
-        @builder.ready(self)
-      end  
-
-      def flags_for(given_gem)
-        ""
-      end
-    end
-
     module Piloto
       def initialize(worker)
         @worker = worker
