@@ -19,18 +19,34 @@ module Tokaido::Bootstrap
   class HeaderFileChecker
     def symlink_os_x_10_10
       system "ln -sf #{Paths.header_path_for('iconv', '10_10', 'iconv.h')} /usr/include/iconv.h"
+      system "ln -sf #{Paths.header_path_for('iconv', '10_10', 'libcharset.h')} /usr/include/libcharset.h"
+      system "ln -sf #{Paths.header_path_for('iconv', '10_10', 'localcharset.h')} /usr/include/localcharset.h"
     end
 
     def symlink_os_x_10_9
       system "ln -sf #{Paths.header_path_for('iconv', '10_9', 'iconv.h')} /usr/include/iconv.h"
+      system "ln -sf #{Paths.header_path_for('iconv', '10_9', 'libcharset.h')} /usr/include/libcharset.h"
+      system "ln -sf #{Paths.header_path_for('iconv', '10_9', 'localcharset.h')} /usr/include/localcharset.h"
     end
 
     def symlink_os_x_10_8
       system "ln -sf #{Paths.header_path_for('iconv', '10_8', 'iconv.h')} /usr/include/iconv.h"
+      system "ln -sf #{Paths.header_path_for('iconv', '10_8', 'libcharset.h')} /usr/include/libcharset.h"
+      system "ln -sf #{Paths.header_path_for('iconv', '10_8', 'localcharset.h')} /usr/include/localcharset.h"
+    end
+
+    def symlink_os_x_generic
+      system "ln -sf #{Paths.header_path_for('iconv', '', 'iconv.h')} /usr/include/iconv.h"
+      system "ln -sf #{Paths.header_path_for('iconv', '', 'libcharset.h')} /usr/include/libcharset.h"
+      system "ln -sf #{Paths.header_path_for('iconv', '', 'localcharset.h')} /usr/include/localcharset.h"
     end
 
     def perform_symlinks(major, minor, tiny)
-      self.send "symlink_os_x_#{[major, minor].join("_")}".to_sym
+      begin
+        self.send "symlink_os_x_#{[major, minor].join("_")}".to_sym
+      rescue
+        symlink_os_x_generic
+      end
     end
   end
 end
