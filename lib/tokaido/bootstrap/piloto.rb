@@ -74,6 +74,7 @@ module Tokaido
         @worker.done if File.exists?(firewall_destination)
         @worker.write_resolver
         @worker.copy_firewall_rules
+        @worker.done
       end
 
       def load_jobs

@@ -18,19 +18,19 @@ module Tokaido::Bootstrap
 
   class HeaderFileChecker
     def symlink_os_x_10_10
-      system "ln -sf #{Paths.header_path_for('iconv', '10-10', 'iconv.h')} /usr/include/iconv.h"
+      system "ln -sf #{Paths.header_path_for('iconv', '10_10', 'iconv.h')} /usr/include/iconv.h"
     end
 
     def symlink_os_x_10_9
-      system "ln -sf #{Paths.header_path_for('iconv', '10-9', 'iconv.h')} /usr/include/iconv.h"
+      system "ln -sf #{Paths.header_path_for('iconv', '10_9', 'iconv.h')} /usr/include/iconv.h"
     end
 
     def symlink_os_x_10_8
-      system "ln -sf #{Paths.header_path_for('iconv', '10-8', 'iconv.h')} /usr/include/iconv.h"
+      system "ln -sf #{Paths.header_path_for('iconv', '10_8', 'iconv.h')} /usr/include/iconv.h"
     end
 
-    def perform_symlinks(major, minor)
-      self.send "symlink_is_x_#{[major, minor].join("_")}".to_sym
+    def perform_symlinks(major, minor, tiny)
+      self.send "symlink_os_x_#{[major, minor].join("_")}".to_sym
     end
   end
 end
