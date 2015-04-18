@@ -35,6 +35,13 @@ describe "Tokaido::Bootstrap::Protocol" do
     expect(request.reason).to eql(%{ERR "foo.dev" invalid-host})
   end
 
+  it "allows the port to be optional" do
+    request = @protocol.decode(%{ADD "#{@dirname}" "foo.tokaido"})
+
+    expect(request).not_to be_error
+    expect(request.port).to be_nil
+  end
+
   it "returns an error if the directory does not exist" do
     request = @protocol.decode(%{ADD "#{@dirname}/noexist" "foo.tokaido" 9292})
 

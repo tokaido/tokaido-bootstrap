@@ -44,7 +44,7 @@ module Tokaido
 
     class Protocol
       ADD = "ADD"
-      ADD_MATCH = /^(ADD) "([^"]+)" "([^"]+)" (\d{4})$/
+      ADD_MATCH = /^(ADD) "([^"]+)" "([^"]+)"\ ?([0-9]+)?/
       REMOVE = "REMOVE"
       REMOVE_MATCH = /^(REMOVE) "([^"]+)"$/
       INVALID_HOST = "invalid-host"
