@@ -1,10 +1,10 @@
 module Tokaido
   module Bootstrap
     class Request
-      attr_reader :type, :directory, :host
+      attr_reader :type, :directory, :host, :port
 
-      def initialize(type, directory, host)
-        @type, @directory, @host = type, directory, host
+      def initialize(type, directory, host, port)
+        @type, @directory, @host, @port = type, directory, host, port
       end
 
       def error?
@@ -44,7 +44,7 @@ module Tokaido
 
     class Protocol
       ADD = "ADD"
-      ADD_MATCH = /^(ADD) "([^"]+)" "([^"]+)"$/
+      ADD_MATCH = /^(ADD) "([^"]+)" "([^"]+)" (\d{4})$/
       REMOVE = "REMOVE"
       REMOVE_MATCH = /^(REMOVE) "([^"]+)"$/
       INVALID_HOST = "invalid-host"
@@ -65,14 +65,14 @@ module Tokaido
 
         return Error.new(nil) if match.nil?
 
-        _, type, host, directory = match.to_a
+        _, type, directory, host, port = match.to_a
 
         if !valid_host?(host)
           Error.new(host, INVALID_HOST)
         elsif type == "ADD" && !valid_directory?(directory)
           Error.new(host, INVALID_DIRECTORY)
         else
-          Request.new(type, directory, host)
+          Request.new(type, directory, host, port)
         end
       end
 
