@@ -46,7 +46,7 @@ module Tokaido
       ADD = "ADD"
       ADD_MATCH = /^(ADD) "([^"]+)" "([^"]+)"\ ?([0-9]+)?/
       REMOVE = "REMOVE"
-      REMOVE_MATCH = /^(REMOVE) "([^"]+)"$/
+      REMOVE_MATCH = /^(REMOVE) "([^"]+)" "([^"]+)"$/
       INVALID_HOST = "invalid-host"
       INVALID_DIRECTORY = "dir-not-found"
 

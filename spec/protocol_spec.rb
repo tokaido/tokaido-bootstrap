@@ -11,6 +11,13 @@ describe "Tokaido::Bootstrap::Protocol" do
     expect(request.type).to eql("STOP")
   end
 
+  it "decodes a remove request" do
+    request = @protocol.decode(%{REMOVE "#{@dirname}" "foo.tokaido"})
+
+    expect(request).not_to be_error
+    expect(request.type).to eql("REMOVE")
+  end
+
   it "decodes an add request" do
     request = @protocol.decode(%{ADD "#{@dirname}" "foo.tokaido" 9292})
 

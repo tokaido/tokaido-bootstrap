@@ -9,12 +9,13 @@ module Tokaido
 
       def initialize(muxr_socket, firewall_socket, tmpdir)
         @muxr_socket = muxr_socket
-        @firewall_socket = connect_client(firewall_socket)
+        @firewall_socket = firewall_socket
         @tmpdir = tmpdir
       end
 
       def enable
         @muxr_commands_server = connect_server(@muxr_socket)
+        @firewall_client = connect_client(@firewall_socket)
 
         boot_dns
         boot_muxr
@@ -50,6 +51,7 @@ module Tokaido
       end
 
       def remove_app(application, options={ respond: true })
+        p application.pid
         response = @apps.remove application
 
         if options[:respond]
@@ -100,11 +102,11 @@ module Tokaido
       end
 
       def enable_firewall_rules
-        @firewall_socket.puts "enable firewall rules"
+        @firewall_client.puts "enable firewall rules"
       end
 
       def disable_firewall_rules
-        @firewall_socket.puts "disable firewall rules"
+        @firewall_client.puts "disable firewall rules"
       end
 
       def listen_for_commands
