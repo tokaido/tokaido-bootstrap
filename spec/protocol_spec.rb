@@ -12,14 +12,21 @@ describe "Tokaido::Bootstrap::Protocol" do
   end
 
   it "decodes a remove request" do
-    request = @protocol.decode(%{REMOVE "#{@dirname}" "foo.tokaido"})
+    request = @protocol.decode(%{REMOVE "foo.tokaido"})
+
+    expect(request).not_to be_error
+    expect(request.type).to eql("REMOVE")
+  end
+
+  it "decodes a remove request" do
+    request = @protocol.decode(%{REMOVE "foo.tokaido"})
 
     expect(request).not_to be_error
     expect(request.type).to eql("REMOVE")
   end
 
   it "decodes an add request" do
-    request = @protocol.decode(%{ADD "#{@dirname}" "foo.tokaido" 9292})
+    request = @protocol.decode(%{ADD "foo.tokaido" "#{@dirname}" 9292})
 
     expect(request).to_not be_error
     expect(request.type).to eql("ADD")
@@ -29,28 +36,28 @@ describe "Tokaido::Bootstrap::Protocol" do
   end
 
   it "returns an error if the format is invalid" do
-    request = @protocol.decode(%{AD /Code/foo foo.tokaido 9292})
+    request = @protocol.decode(%{AD foo.tokaido /Code/foo 9292})
 
     expect(request).to be_error
     expect(request.reason).to eql("INVALID")
   end
 
   it "returns an error if the domain is incorrect" do
-    request = @protocol.decode(%{ADD "#{@dirname}" "foo.dev" 9292})
+    request = @protocol.decode(%{ADD "foo.dev" "#{@dirname}" 9292})
 
     expect(request).to be_error
     expect(request.reason).to eql(%{ERR "foo.dev" invalid-host})
   end
 
   it "allows the port to be optional" do
-    request = @protocol.decode(%{ADD "#{@dirname}" "foo.tokaido"})
+    request = @protocol.decode(%{ADD "foo.tokaido" "#{@dirname}"})
 
     expect(request).not_to be_error
     expect(request.port).to be_nil
   end
 
   it "returns an error if the directory does not exist" do
-    request = @protocol.decode(%{ADD "#{@dirname}/noexist" "foo.tokaido" 9292})
+    request = @protocol.decode(%{ADD "foo.tokaido" "#{@dirname}/noexist" 9292})
 
     expect(request).to be_error
     expect(request.reason).to eql(%{ERR "foo.tokaido" dir-not-found})

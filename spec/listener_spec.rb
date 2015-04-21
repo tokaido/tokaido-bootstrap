@@ -15,12 +15,12 @@ describe "Tokaido::Bootstrap::Listener" do
 
   it "adds a Tokaido app" do
     expect(@manager).to receive(:add_app)
-    @listener.process_request(%{ADD "#{@dirname}" "foo.tokaido" 9292})
+    @listener.process_request(%{ADD "foo.tokaido" "#{@dirname}" 9292})
   end
 
   it "removes a Tokaido app" do
     expect(@manager).to receive(:remove_app)
-    @listener.process_request(%{REMOVE "#{@dirname}" "foo.tokaido"})
+    @listener.process_request(%{REMOVE "foo.tokaido"})
   end
 
 
