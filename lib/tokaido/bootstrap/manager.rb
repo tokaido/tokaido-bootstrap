@@ -51,7 +51,6 @@ module Tokaido
       end
 
       def remove_app(application, options={ respond: true })
-        p application.pid
         response = @apps.remove application
 
         if options[:respond]
