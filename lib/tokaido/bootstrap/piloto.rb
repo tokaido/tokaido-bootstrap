@@ -1,30 +1,6 @@
 module Tokaido
   module Bootstrap
-    module Paths
-      STATIC_BUILDS = File.expand_path(File.join("..", "..", "..", "..", "..", "Gems", "supps"), __FILE__)
-      ICONV = File.join(STATIC_BUILDS, "iconv")
 
-      def self.header_path_for(libname, os, h_file)
-        begin
-          src = Paths.const_get(libname.upcase.to_sym)
-          File.join(src, os, "include", h_file)
-        rescue
-          ""
-        end        
-      end
-    end
-
-    module Piloto
-      def initialize(worker)
-        @worker = worker
-        @worker.ready(self)
-      end
-
-      def mac_info
-        `sw_vers -productVersion`.chomp.split('.').map(&:to_i)
-      end
-    end
- 
     module FirewallOptions
       def firewall_destination
         "/Library/LaunchDaemons/com.tokaido.firewall.plist"
@@ -47,22 +23,25 @@ module Tokaido
       end
     end
 
-    class HeaderFileEnsurancesPiloto
-      include Piloto
-   
-      def start
-        @worker.perform_symlinks(*mac_info)
-      end
-    end
-
-    class InstallerPiloto
-      include Piloto
+    class BootstrapInstaller
       include FirewallOptions 
+
+      def initialize(worker)
+        @worker = worker
+        @worker.ready(self)
+      end
+
+      def mac_info
+        `sw_vers -productVersion`.chomp.split('.').map(&:to_i)
+      end
 
       def start
         @worker.done if File.exists?(firewall_destination)
         @worker.write_resolver
         @worker.copy_firewall_rules
+
+        load_jobs
+
         @worker.done
       end
 
