@@ -8,8 +8,8 @@ Gem::Specification.new do |gem|
   gem.version       = Tokaido::Bootstrap::VERSION
   gem.authors       = ["Yehuda Katz"]
   gem.email         = ["wycats@gmail.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %q{Entry point for the Tokaido GUI}
+  gem.summary       = %q{Bundles dns resolver and muxr}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($/)
